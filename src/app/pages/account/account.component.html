@@ -1,0 +1,46 @@
+<div class="h-screen flex items-center">
+  <div class="container mx-auto my-8 p-8 bg-white shadow-md rounded-md max-w-md">
+    <!-- Error Message -->
+    <div *ngIf="error" class="text-red-500 text-center mb-4">
+      {{ error }}
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="(accountDetail$ | async) === null && !error" class="text-center">
+      Loading account details...
+    </div>
+
+    <!-- Account Details -->
+    <ng-container *ngIf="accountDetail$ | async as user">
+      <div class="text-center">
+        <!-- User Avatar -->
+        <div class="rounded-full bg-blue-500 my-4 text-4xl w-24 h-24 mx-auto inline-flex items-center justify-center font-bold text-white">
+          {{ user.fullname[0] | uppercase }}
+        </div>
+      </div>
+      
+      <hr class="my-4 border-slate-400">
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div class="text-gray-600 font-bold">Full Name</div>
+        <div class="text-gray-800 font-medium">{{ user.fullname | titlecase }}</div>
+        
+        <div class="text-gray-600 font-bold">Email</div>
+        <div class="text-gray-800 font-medium">{{ user.email }}</div>
+        
+        <div class="text-gray-600 font-bold">Role</div>
+        <div>
+          <span class="bg-green-700 text-white text-xs rounded-md py-1 px-2">
+            {{ user.roles === 0 ? 'User' : 'Admin' }}
+          </span>
+        </div>
+        
+        <div class="text-gray-600 font-bold">Phone</div>
+        <div class="text-gray-800 font-medium">{{ user.phoneNumber || '-' }}</div>
+        
+        <div class="text-gray-600 font-bold">Access Failed Count</div>
+        <div class="text-gray-800 font-medium">{{ user.accessFailedCount }}</div>
+      </div>
+    </ng-container>
+  </div>
+</div>
