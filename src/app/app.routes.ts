@@ -11,6 +11,7 @@ import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 import { StoreComponent } from './pages/store/store.component';
+import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 export const routes: Routes = [
   {
     path: '',
@@ -45,6 +46,10 @@ export const routes: Routes = [
     path: 'account/:id',
     component: AccountComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'product/:id',
+    component: ProductDetailComponent,
   },
   {path: 'users',
     component: UsersComponent,

@@ -1,0 +1,8 @@
+.text-truncatuu {
+  display: inline-block; /* Hiển thị trong một dòng */
+  max-width: 350px; /* Giới hạn chiều dài tối đa */
+  white-space: nowrap; /* Không cho phép xuống dòng */
+  overflow: hidden; /* Ẩn nội dung tràn ra ngoài */
+  text-overflow: ellipsis; /* Hiển thị dấu ba chấm nếu quá dài */
+}
+

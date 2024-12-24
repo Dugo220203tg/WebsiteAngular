@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, throwError, tap } from 'rxjs';
-import { ProductRequest } from '../interfaces/product';
+import { catchError, Observable, throwError, tap, map, of } from 'rxjs';
+import { ProductDetailRequest, ProductRequest } from '../interfaces/product';
 
 @Injectable({
   providedIn: 'root',
@@ -12,21 +12,31 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  getProducts(): Observable<ProductRequest[]> {
+  getProducts(limit?: number): Observable<ProductRequest[]> {
     return this.http
       .get<ProductRequest[]>(`${this.apiUrl}HangHoa/GetAll`)
       .pipe(
+        map(products => limit ? products.slice(0, limit) : products),
         tap((products) => console.log('Received products:', products)),
         catchError(this.handleError)
       );
   }
+  getProductDetail(id: number): Observable<ProductDetailRequest | null> {
+    if (!id || id <= 0) {
+        console.error('Invalid product ID:', id);
+        return of(null);
+    }
 
-  getProductById(id: number): Observable<ProductRequest> {
-    return this.http.get<ProductRequest>(`${this.apiUrl}HangHoa/GetById/${id}`).pipe(
-      tap((product) => console.log('Received product:', product)),
-      catchError(this.handleError)
-    );
-  }
+    return this.http
+        .get<ProductDetailRequest>(`${this.apiUrl}HangHoa/GetById/${id}`)
+        .pipe(
+            tap(product => console.log('Received product:', product)),
+            catchError(error => {
+                console.error('Error fetching product detail:', error);
+                return of(null);
+            })
+        );
+}
 
   createProduct(product: ProductRequest): Observable<ProductRequest> {
     return this.http

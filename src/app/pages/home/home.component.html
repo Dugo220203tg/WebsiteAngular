@@ -1,387 +1,406 @@
-<head>
-  <script src="/docs/5.3/assets/js/color-modes.js"></script>
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="" />
-  <meta
-    name="author"
-    content="Mark Otto, Jacob Thornton, and Bootstrap contributors"
-  />
-  <meta name="generator" content="Hugo 0.122.0" />
-  <title>Album example · Bootstrap v5.3</title>
-
-  <link
-    rel="canonical"
-    href="https://getbootstrap.com/docs/5.3/examples/album/"
-  />
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
-
-  <link
-    href="/docs/5.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous"
-  />
-
-  <!-- Favicons -->
-  <link
-    rel="apple-touch-icon"
-    href="/docs/5.3/assets/img/favicons/apple-touch-icon.png"
-    sizes="180x180"
-  />
-  <link
-    rel="icon"
-    href="/docs/5.3/assets/img/favicons/favicon-32x32.png"
-    sizes="32x32"
-    type="image/png"
-  />
-  <link
-    rel="icon"
-    href="/docs/5.3/assets/img/favicons/favicon-16x16.png"
-    sizes="16x16"
-    type="image/png"
-  />
-  <link rel="manifest" href="/docs/5.3/assets/img/favicons/manifest.json" />
-  <link
-    rel="mask-icon"
-    href="/docs/5.3/assets/img/favicons/safari-pinned-tab.svg"
-    color="#712cf9"
-  />
-  <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon.ico" />
-  <meta name="theme-color" content="#712cf9" />
-  <style>
-    .bd-placeholder-img {
-      font-size: 1.125rem;
-      text-anchor: middle;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      user-select: none;
-    }
-
-    @media (min-width: 768px) {
-      .bd-placeholder-img-lg {
-        font-size: 3.5rem;
-      }
-    }
-
-    .b-example-divider {
-      width: 100%;
-      height: 3rem;
-      background-color: rgba(0, 0, 0, 0.1);
-      border: solid rgba(0, 0, 0, 0.15);
-      border-width: 1px 0;
-      box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
-        inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
-    }
-
-    .b-example-vr {
-      flex-shrink: 0;
-      width: 1.5rem;
-      height: 100vh;
-    }
-
-    .bi {
-      vertical-align: -0.125em;
-      fill: currentColor;
-    }
-
-    .nav-scroller {
-      position: relative;
-      z-index: 2;
-      height: 2.75rem;
-      overflow-y: hidden;
-    }
-
-    .nav-scroller .nav {
-      display: flex;
-      flex-wrap: nowrap;
-      padding-bottom: 1rem;
-      margin-top: -1px;
-      overflow-x: auto;
-      text-align: center;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .btn-bd-primary {
-      --bd-violet-bg: #712cf9;
-      --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-
-      --bs-btn-font-weight: 600;
-      --bs-btn-color: var(--bs-white);
-      --bs-btn-bg: var(--bd-violet-bg);
-      --bs-btn-border-color: var(--bd-violet-bg);
-      --bs-btn-hover-color: var(--bs-white);
-      --bs-btn-hover-bg: #6528e0;
-      --bs-btn-hover-border-color: #6528e0;
-      --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-      --bs-btn-active-color: var(--bs-btn-hover-color);
-      --bs-btn-active-bg: #5a23c8;
-      --bs-btn-active-border-color: #5a23c8;
-    }
-
-    .bd-mode-toggle {
-      z-index: 1500;
-    }
-
-    .bd-mode-toggle .dropdown-menu .active .bi {
-      display: block !important;
-    }
-  </style>
-
-  <style>
-    .--savior-overlay-transform-reset {
-      transform: none !important;
-    }
-    .--savior-overlay-z-index-top {
-      z-index: 2147483643 !important;
-    }
-    .--savior-overlay-position-relative {
-      position: relative;
-    }
-    .--savior-overlay-position-static {
-      position: static !important;
-    }
-    .--savior-overlay-overflow-hidden {
-      overflow: hidden !important;
-    }
-    .--savior-overlay-overflow-x-visible {
-      overflow-x: visible !important;
-    }
-    .--savior-overlay-overflow-y-visible {
-      overflow-y: visible !important;
-    }
-    .--savior-overlay-z-index-reset {
-      z-index: auto !important;
-    }
-    .--savior-overlay-display-none {
-      display: none !important;
-    }
-    .--savior-overlay-clearfix {
-      clear: both;
-    }
-    .--savior-overlay-reset-filter {
-      filter: none !important;
-      backdrop-filter: none !important;
-    }
-    .--savior-tooltip-host {
-      z-index: 9999;
-      position: absolute;
-      top: 0;
-    }
-    /*Override css styles for Twitch.tv*/
-    main.--savior-overlay-z-index-reset {
-      z-index: auto !important;
-    }
-    .modal__backdrop.--savior-overlay-z-index-reset {
-      position: static !important;
-    }
-    main.--savior-overlay-z-index-top {
-      z-index: auto !important;
-    }
-    main.--savior-overlay-z-index-top .channel-root__player-container + div,
-    main.--savior-overlay-z-index-top
-      .video-player-hosting-ui__container
-      + div {
-      opacity: 0.1;
-    }
-    /*Dirty hack for facebook big video page e.g: https://www.facebook.com/abc/videos/...*/
-    .--savior-backdrop {
-      position: fixed !important;
-      z-index: 2147483642 !important;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 100vw !important;
-      background-color: rgba(0, 0, 0, 0.9);
-    }
-    .--savior-overlay-twitter-video-player {
-      position: fixed;
-      width: 80%;
-      height: 80%;
-      top: 10%;
-      left: 10%;
-    }
-    .--savior-overlay-z-index-reset [class*="DivSideNavContainer"],
-    .--savior-overlay-z-index-reset [class*="DivHeaderContainer"],
-    .--savior-overlay-z-index-reset [class*="DivBottomContainer"],
-    .--savior-overlay-z-index-reset [class*="DivCategoryListWrapper"],
-    .--savior-overlay-z-index-reset [data-testid="sidebarColumn"],
-    .--savior-overlay-z-index-reset header[role="banner"],
-    .--savior-overlay-z-index-reset
-      [data-testid="cellInnerDiv"]:not(.--savior-overlay-z-index-reset),
-    .--savior-overlay-z-index-reset
-      [aria-label="Home timeline"]
-      > div:first-child,
-    .--savior-overlay-z-index-reset
-      [aria-label="Home timeline"]
-      > div:nth-child(3) {
-      z-index: -1 !important;
-    }
-    .--savior-overlay-z-index-reset
-      [data-testid="cellInnerDiv"]
-      .--savior-backdrop
-      + div {
-      z-index: 2147483643 !important;
-    }
-    .--savior-overlay-z-index-reset
-      [data-testid="primaryColumn"]
-      > [aria-label="Home timeline"] {
-      z-index: 0 !important;
-    }
-    .--savior-overlay-z-index-reset#mtLayer,
-    .--savior-overlay-z-index-reset.media-layer {
-      z-index: 3000 !important;
-    }
-    .--savior-overlay-position-relative [class*="SecBar_secBar_"],
-    .--savior-overlay-position-relative .woo-box-flex [class*="Frame_top_"] {
-      z-index: 0 !important;
-    }
-    .--savior-overlay-position-relative
-      .vue-recycle-scroller__item-view:not(.--savior-overlay-z-index-reset),
-    .--savior-overlay-position-relative .woo-panel-main[class*="BackTop_main_"],
-    .--savior-overlay-position-relative [class*="Main_side_"] {
-      z-index: -1 !important;
-    }
-    /* Fix conflict css with zingmp3 */
-    .zm-video-modal.--savior-overlay-z-index-reset {
-      position: absolute;
-    }
-    /* Dirty hack for xvideos99 */
-    #page #main.--savior-overlay-z-index-reset {
-      z-index: auto !important;
-    }
-    /* Overlay for ok.ru */
-    #vp_w.--savior-overlay-z-index-reset.media-layer.media-layer__video {
-      overflow-y: hidden;
-      z-index: 2147483643 !important;
-    }
-    /* Fix missing controller for tv.naver.com */
-    .--savior-overlay-z-index-top.rmc_controller,
-    .--savior-overlay-z-index-top.rmc_setting_intro,
-    .--savior-overlay-z-index-top.rmc_highlight,
-    .--savior-overlay-z-index-top.rmc_control_settings {
-      z-index: 2147483644 !important;
-    }
-    /* Dirty hack for douyi.com */
-    .swiper-wrapper.--savior-overlay-z-index-reset
-      .swiper-slide:not(.swiper-slide-active),
-    .swiper-wrapper.--savior-overlay-transform-reset
-      .swiper-slide:not(.swiper-slide-active) {
-      display: none;
-    }
-    .videoWrap + div > div {
-      pointer-events: unset;
-    }
-    /* Dirty hack for fpt.ai */
-    .mfp-wrap.--savior-overlay-z-index-top {
-      position: relative;
-    }
-    .mfp-wrap.--savior-overlay-z-index-top .mfp-close {
-      display: none;
-    }
-    .mfp-wrap.--savior-overlay-z-index-top .mfp-content {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    section.--savior-overlay-z-index-reset
-      > main[role="main"].--savior-overlay-z-index-reset
-      + nav {
-      z-index: -1 !important;
-    }
-    section.--savior-overlay-z-index-reset
-      > main[role="main"].--savior-overlay-z-index-reset
-      section.--savior-overlay-z-index-reset
-      div.--savior-overlay-z-index-reset
-      ~ div {
-      position: relative;
-    }
-    .watching-movie #video-player.--savior-overlay-z-index-top {
-      z-index: 2147483644 !important;
-    }
-    div[class^="tiktok"].--savior-overlay-z-index-reset {
-      z-index: 2147483644 !important;
-    }
-    .--savior-lightoff-fix section:not(:has([class*="--savior-overlay-"])),
-    .--savior-lightoff-fix section.section_video ~ section {
-      z-index: -1;
-      position: relative;
-    }
-    .--savior-lightoff-fix header,
-    .--savior-lightoff-fix footer,
-    .--savior-lightoff-fix .top-header,
-    .--savior-lightoff-fix .swiper-container,
-    .--savior-lightoff-fix #to_top,
-    .--savior-lightoff-fix #button-adblock {
-      z-index: -1 !important;
-    }
-    @-moz-keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-    @-webkit-keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-    @-o-keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-  </style>
-</head>
-<div class="flex items-center flex-col pt-56 h-screen">
-  <div class="h-screen">
-    <h1 class="text-4xl text-center font-bold my-10">Welcome to</h1>
-    <span class="text-5xl text-green-800">MyApp</span>
-    <div class="flex flex-col items-center gap-5 justify-center">
-      <img src="/src/assets/img/HangHoa/1/123.jpg" alt="no image" />
-      <div *ngIf="userDetail; else notLoggedIn">
-        <h1 class="text-2xl">
-          You are logged in as
-          <span class="font-bold bg-blue-600 text-white">
-            <a routerLink="/store"></a>
-            <button
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
-            >
-              Go to Store
-            </button>
-          </span>
-        </h1>
-      </div>
-      <ng-template #notLoggedIn>
-        <h1>You are not logged in</h1>
-        <a routerLink="/login">
-          <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
+<!-- Carousel Start -->
+<div class="container-fluid mb-3">
+  <div class="row px-xl-5">
+    <div class="col-lg-8">
+      <div
+        id="header-carousel"
+        class="carousel slide carousel-fade mb-30 mb-lg-0"
+        data-ride="carousel"
+      >
+        <ol class="carousel-indicators">
+          <li
+            data-target="#header-carousel"
+            data-slide-to="0"
+            class="active"
+          ></li>
+          <li data-target="#header-carousel" data-slide-to="1"></li>
+          <li data-target="#header-carousel" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div
+            class="carousel-item position-relative active"
+            style="height: 430px"
           >
-            Login
-          </button>
-        </a>
-      </ng-template>
+            <img
+              class="position-absolute w-100 h-100"
+              src="assets/assets/img/carousel-1.jpg"
+              style="object-fit: cover"
+            />
+            <div
+              class="carousel-caption d-flex flex-column align-items-center justify-content-center"
+            >
+              <div class="p-3" style="max-width: 700px">
+                <h1
+                  class="display-4 text-white mb-3 animate__animated animate__fadeInDown"
+                >
+                  Men Fashion
+                </h1>
+                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                  Lorem rebum magna amet lorem magna erat diam stet. Sadips duo
+                  stet amet amet ndiam elitr ipsum diam
+                </p>
+                <a
+                  class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+                  href="#"
+                  >Shop Now</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item position-relative" style="height: 430px">
+            <img
+              class="position-absolute w-100 h-100"
+              src="assets/assets/img/carousel-2.jpg"
+              style="object-fit: cover"
+            />
+            <div
+              class="carousel-caption d-flex flex-column align-items-center justify-content-center"
+            >
+              <div class="p-3" style="max-width: 700px">
+                <h1
+                  class="display-4 text-white mb-3 animate__animated animate__fadeInDown"
+                >
+                  Women Fashion
+                </h1>
+                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                  Lorem rebum magna amet lorem magna erat diam stet. Sadips duo
+                  stet amet amet ndiam elitr ipsum diam
+                </p>
+                <a
+                  class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+                  href="#"
+                  >Shop Now</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item position-relative" style="height: 430px">
+            <img
+              class="position-absolute w-100 h-100"
+              src="assets/assets/img/carousel-3.jpg"
+              style="object-fit: cover"
+            />
+            <div
+              class="carousel-caption d-flex flex-column align-items-center justify-content-center"
+            >
+              <div class="p-3" style="max-width: 700px">
+                <h1
+                  class="display-4 text-white mb-3 animate__animated animate__fadeInDown"
+                >
+                  Kids Fashion
+                </h1>
+                <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                  Lorem rebum magna amet lorem magna erat diam stet. Sadips duo
+                  stet amet amet ndiam elitr ipsum diam
+                </p>
+                <a
+                  class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+                  href="#"
+                  >Shop Now</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="product-offer mb-30" style="height: 200px">
+        <img class="img-fluid" src="assets/img/offer-1.jpg" alt="" />
+        <div class="offer-text">
+          <h6 class="text-white text-uppercase">Save 20%</h6>
+          <h3 class="text-white mb-3">Special Offer</h3>
+          <a href="" class="btn btn-primary">Shop Now</a>
+        </div>
+      </div>
+      <div class="product-offer mb-30" style="height: 200px">
+        <img class="img-fluid" src="assets/img/offer-2.jpg" alt="" />
+        <div class="offer-text">
+          <h6 class="text-white text-uppercase">Save 20%</h6>
+          <h3 class="text-white mb-3">Special Offer</h3>
+          <a href="" class="btn btn-primary">Shop Now</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+<!-- Carousel End -->
+
+<!-- Featured Start -->
+<div class="container-fluid pt-5">
+  <div class="row px-xl-5 pb-3">
+    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+      <div
+        class="d-flex align-items-center bg-light mb-4"
+        style="padding: 30px"
+      >
+        <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
+        <h5 class="font-weight-semi-bold m-0">Quality Product</h5>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+      <div
+        class="d-flex align-items-center bg-light mb-4"
+        style="padding: 30px"
+      >
+        <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
+        <h5 class="font-weight-semi-bold m-0">Free Shipping</h5>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+      <div
+        class="d-flex align-items-center bg-light mb-4"
+        style="padding: 30px"
+      >
+        <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
+        <h5 class="font-weight-semi-bold m-0">14-Day Return</h5>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+      <div
+        class="d-flex align-items-center bg-light mb-4"
+        style="padding: 30px"
+      >
+        <h1 class="fa fa-phone-volume text-primary m-0 mr-3"></h1>
+        <h5 class="font-weight-semi-bold m-0">24/7 Support</h5>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Featured End -->
+
+<!-- Categories Start -->
+<div class="container-fluid pt-5">
+  <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+    <span class="bg-secondary pr-3">Categories</span>
+  </h2>
+  <div class="row px-xl-5 pb-3">
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-1.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-2.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-3.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-4.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-4.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-3.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-2.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-1.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-2.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-1.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-4.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+      <a class="text-decoration-none" href="">
+        <div class="cat-item img-zoom d-flex align-items-center mb-4">
+          <div class="overflow-hidden" style="width: 100px; height: 100px">
+            <img class="img-fluid" src="assets/img/cat-3.jpg" alt="" />
+          </div>
+          <div class="flex-fill pl-3">
+            <h6>Category Name</h6>
+            <small class="text-body">100 Products</small>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+<!-- Categories End -->
+
+<!-- Products Start -->
+<app-product-features></app-product-features>
+<!-- Products End -->
+
+<!-- Offer Start -->
+<div class="container-fluid pt-5 pb-3">
+  <div class="row px-xl-5">
+    <div class="col-md-6">
+      <div class="product-offer mb-30" style="height: 300px">
+        <img class="img-fluid" src="assets/img/offer-1.jpg" alt="" />
+        <div class="offer-text">
+          <h6 class="text-white text-uppercase">Save 20%</h6>
+          <h3 class="text-white mb-3">Special Offer</h3>
+          <a href="" class="btn btn-primary">Shop Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="product-offer mb-30" style="height: 300px">
+        <img class="img-fluid" src="assets/img/offer-2.jpg" alt="" />
+        <div class="offer-text">
+          <h6 class="text-white text-uppercase">Save 20%</h6>
+          <h3 class="text-white mb-3">Special Offer</h3>
+          <a href="" class="btn btn-primary">Shop Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Offer End -->
+
+<!-- Products Start -->
+<app-product-features></app-product-features>
+<!-- Products End -->
+
+<!-- Vendor Start -->
+<div class="container-fluid py-5">
+  <div class="row px-xl-5">
+    <div class="col">
+      <div class="owl-carousel vendor-carousel">
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-1.jpg" alt="" />
+        </div>
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-2.jpg" alt="" />
+        </div>
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-3.jpg" alt="" />
+        </div>
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-4.jpg" alt="" />
+        </div>
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-5.jpg" alt="" />
+        </div>
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-6.jpg" alt="" />
+        </div>
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-7.jpg" alt="" />
+        </div>
+        <div class="bg-light p-4">
+          <img src="assets/img/vendor-8.jpg" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Vendor End -->
