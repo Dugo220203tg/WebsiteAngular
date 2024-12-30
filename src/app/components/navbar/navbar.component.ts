@@ -7,6 +7,8 @@ import { AuthService } from '../../services/auth.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { WishListService } from '../../services/wishList.service';
+import { WishListRequest } from '../../interfaces/wishList';
 
 @Component({
   selector: 'app-navbar',
@@ -16,25 +18,37 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatIconModule,
     RouterLink,
     MatMenuModule,
-    CommonModule
+    CommonModule,
   ],
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
   authService = inject(AuthService);
   matSnackBar = inject(MatSnackBar);
   router = inject(Router);
-  
-  // Thêm thuộc tính userDetail
+  wishlistCount: number = 0;
+  wishlists: WishListRequest[] = [];
+
   userDetail: any = null;
+  constructor(private wishListService: WishListService) {}
 
   ngOnInit() {
-    // Khi component khởi tạo, lấy thông tin người dùng
     this.userDetail = this.authService.getUserDetail();
-    console.log('Navbar User Detail:', this.userDetail);
+    this.loadWishlists();
+    this.wishListService.wishlistCount$.subscribe((count) => {
+      this.wishlistCount = count;
+    });
   }
-
+  loadWishlists(): void {
+    this.wishListService.getWishList().subscribe({
+      next: (wishlists) => {
+        this.wishlists = wishlists;
+        const count = wishlists.length;
+        this.wishListService.updateWishlistCount(count); // Cập nhật số lượng vào Service
+      },
+    });
+  }
   isLoggedIn() {
     const loggedIn = this.authService.isLoggedIn();
     //console.log('Navbar Is Logged In:', loggedIn);

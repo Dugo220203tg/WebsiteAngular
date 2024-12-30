@@ -1,4 +1,3 @@
-import { RegisterRequest } from './interfaces/register-request';
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -12,6 +11,10 @@ import { ResetPasswordComponent } from './pages/reset-password/reset-password.co
 import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 import { StoreComponent } from './pages/store/store.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
+import { CheckOutComponent } from './pages/check-out/check-out.component';
+import { CartComponent } from './pages/cart/cart.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { WishListComponent } from './pages/wish-list/wish-list.component';
 export const routes: Routes = [
   {
     path: '',
@@ -22,12 +25,21 @@ export const routes: Routes = [
     component: LoginComponent,
   },
   {
-    path: 'store',
+    path: 'store/:page',
     component: StoreComponent,
+  },
+  {
+    path: 'store',
+    redirectTo: 'store/1',
+    pathMatch: 'full',
   },
   {
     path: 'register',
     component: RegisterComponent,
+  },
+  {
+    path: 'wishlist',
+    component: WishListComponent, 
   },
   {
     path: 'forgot-password',
@@ -51,11 +63,24 @@ export const routes: Routes = [
     path: 'product/:id',
     component: ProductDetailComponent,
   },
-  {path: 'users',
+  {
+    path: 'users',
     component: UsersComponent,
     canActivate: [roleGuard],
-    data:{
+    data: {
       roles: ['admin'],
-    }
-  }
+    },
+  },
+  {
+    path: 'checkout',
+    component: CheckOutComponent,
+  },
+  {
+    path: 'cart',
+    component: CartComponent,
+  },
+  {
+    path: 'contact',
+    component: ContactComponent,
+  },
 ];

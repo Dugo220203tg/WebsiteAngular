@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Router, RouterLink } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import {
   AbstractControl,
@@ -11,7 +10,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CommonModule, AsyncPipe } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { RoleService } from '../../services/role.service';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -28,11 +27,9 @@ import { RegisterRequest } from '../../interfaces/register-request';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    MatSelectModule,
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    AsyncPipe,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
@@ -54,7 +51,7 @@ export class RegisterComponent {
       email: this.registerForm.get('email')?.value,
       password: this.registerForm.get('password')?.value,
       userName: this.registerForm.get('userName')?.value,
-      roles: this.registerForm.get('roles')?.value
+      roles: 0,
     };
 
     this.authService.register(registerData).subscribe({
@@ -84,7 +81,7 @@ export class RegisterComponent {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required]],
         userName: ['', Validators.required],
-        roles: ['', Validators.required],
+        roles: [0, Validators.required],  // Set default value to 0
         confirmPassword: ['', Validators.required],
       },
       {

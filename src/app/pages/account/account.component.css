@@ -1,0 +1,66 @@
+/* Adding to your existing CSS */
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  background-color: #553c9a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0 auto 20px;
+}
+
+.profile-details {
+  margin-top: 30px;
+}
+
+.detail-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.detail-label {
+  color: #555;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.detail-value {
+  color: #333;
+  font-size: 14px;
+}
+
+.role-badge {
+  background-color: #166534;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+/* Add a divider between sections */
+.profile-details {
+  position: relative;
+}
+
+.profile-details::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #ddd;
+}
+.account-info{
+    display: grid;
+    place-items: center;
+}

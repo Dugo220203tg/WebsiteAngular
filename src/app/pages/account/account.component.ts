@@ -16,7 +16,8 @@ export class AccountComponent implements OnInit {
   accountDetail$: Observable<AccountDetails | null> = of(null);
   error: string | null = null;
   userFromToken = this.authService.getUserDetail();
-
+  isLoading: boolean = false;
+  
   ngOnInit() {
     // Get account details from API
     this.accountDetail$ = this.authService.getDetail().pipe(

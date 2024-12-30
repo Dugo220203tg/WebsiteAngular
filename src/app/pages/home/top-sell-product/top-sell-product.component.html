@@ -1,0 +1,71 @@
+<div class="row px-xl-5">
+    <div
+      [class]="'col-lg-' + colLg + ' col-md-' + colMd + ' col-sm-' + colSm + ' pb-1'"
+      *ngFor="let product of paginatedProducts" 
+    >
+      <div class="product-item bg-light mb-4">
+        <div class="product-img position-relative overflow-hidden">
+          <img
+            class="img-fluid w-100"
+            [src]="getImagePath(product.maHH, product.hinh)"
+            alt="{{ product.tenHH }}"
+          />
+          <div class="product-action">
+            <a class="btn btn-outline-dark btn-square" href="">
+              <i class="fa fa-shopping-cart"></i>
+            </a>
+            <a
+            class="btn btn-outline-dark btn-square"
+            href=""
+            (click)="addToWishList(product.maHH, $event)"
+            [class.disabled]="loading"
+            [attr.aria-disabled]="loading"
+          >
+            <i class="far fa-heart" [class.fa-spin]="loading"></i>
+          </a>
+            <a class="btn btn-outline-dark btn-square" href="">
+              <i class="fa fa-sync-alt"></i>
+            </a>
+            <a
+              class="btn btn-outline-dark btn-square"
+              [routerLink]="['/product', product.maHH]"
+            >
+              <i class="fa fa-search"></i>
+            </a>
+          </div>
+        </div>
+        <div class="text-center py-4">
+          <a
+            class="h6 text-decoration-none text-truncate"
+            [routerLink]="['/product', product.maHH]"
+          >
+            {{ product.tenHH }}
+          </a>
+          <div class="d-flex align-items-center justify-content-center mt-2">
+            <h5>{{ product.donGia | currency : 'USD' }}</h5>
+            <h6 class="text-muted ml-2">
+              <del>
+                {{
+                  (product.donGia * (product.giamGia + 100)) / 100 | currency : 'USD'
+                }}
+              </del>
+            </h6>
+          </div>
+          <div class="d-flex align-items-center justify-content-center mb-1">
+            <ng-container *ngFor="let star of generateStars(product.trungBinhSao)">
+              <small
+                [class]="
+                  'fa ' +
+                  (star === 'full' ? 'fa-star text-primary' : 'fa-star text-muted') +
+                  ' mr-1'
+                "
+              ></small>
+            </ng-container>
+            <small>({{ product.soLuongDanhGia }})</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  

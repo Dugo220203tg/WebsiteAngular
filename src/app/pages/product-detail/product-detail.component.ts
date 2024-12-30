@@ -12,16 +12,17 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css'],
   standalone: true,
-  imports: [
-    CommonModule,
-    CurrencyPipe,
-    DatePipe
-  ]
+  imports: [CommonModule, CurrencyPipe, DatePipe],
 })
 export class ProductDetailComponent implements OnInit {
   productDetail$: Observable<ProductDetailRequest | null> = of(null);
   error: string | null = null;
+  activeTab: string = 'tab-pane-1';
 
+  switchTab(tabId: string, event: Event) {
+    event.preventDefault();
+    this.activeTab = tabId;
+  }
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute
@@ -35,7 +36,7 @@ export class ProductDetailComponent implements OnInit {
     }
 
     this.productDetail$ = this.productService.getProductDetail(productId).pipe(
-      catchError(error => {
+      catchError((error) => {
         this.error = 'Failed to load product details.';
         console.error('Error fetching product details:', error);
         return of(null);
@@ -46,7 +47,7 @@ export class ProductDetailComponent implements OnInit {
   // Fixed image handling methods
   getAllImages(imageString: string): string[] {
     if (!imageString) return [];
-    return imageString.split(',').map(img => img.trim());
+    return imageString.split(',').map((img) => img.trim());
   }
 
   getImagePath(maHH: number, hinh: string): string {
@@ -58,7 +59,7 @@ export class ProductDetailComponent implements OnInit {
   generateStars(rating: number): string[] {
     const stars: string[] = [];
     const roundedRating = Math.round(rating * 2) / 2; // Round to nearest 0.5
-    
+
     for (let i = 1; i <= 5; i++) {
       if (roundedRating >= i) {
         stars.push('full');
@@ -68,7 +69,7 @@ export class ProductDetailComponent implements OnInit {
         stars.push('empty');
       }
     }
-    
+
     return stars;
   }
 }

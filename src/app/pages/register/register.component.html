@@ -1,88 +1,104 @@
-<div class="h-screen flex items-center justify-center">
-  <form
-    class="shadow-md rounded-md p-5 bg-white w-1/5"
-    [formGroup]="registerForm"
-    (ngSubmit)="register()"
-  >
-    @for(error of errors; track error){
-    <div
-      class="bg-red-100 border mb-2 flex flex-col gap-2 border-red-400 px4 py4 rounded-md relative"
-    >
-      <div class="text-xs p-2">{{ error.description }}</div>
+<!-- register.component.html -->
+<div class="login-container">
+  <form class="login-form" [formGroup]="registerForm" (ngSubmit)="register()">
+    <div class="form-header">
+      <h2>Create Account</h2>
+      <p>Please enter your details to register</p>
     </div>
-    }
-    <mat-form-field appearance="fill" class="w-full">
-      <mat-label>Full Name</mat-label>
-      <input matInput placeholder="Full Name" formControlName="userName" />
-      <mat-icon matPrefix>person</mat-icon>
-    </mat-form-field>
-    
-    <mat-form-field appearance="fill" class="w-full">
-      <mat-label>Email</mat-label>
-      <input matInput placeholder="Email" formControlName="email" />
-      <mat-icon matPrefix>person</mat-icon>
-    </mat-form-field>
 
-    <mat-form-field appearance="fill" class="w-full">
-      <mat-label>Roles</mat-label>
-      <mat-select multiple formControlName="roles">
-        <mat-option *ngFor="let item of (role$ | async)" [value]="item.roleName">
-          {{ item.roleName }}
-        </mat-option>
-      </mat-select>
-      <mat-icon matPrefix>groups</mat-icon>
-    </mat-form-field>
+    <div *ngFor="let error of errors" class="validation-error">
+      <div class="error-message">{{ error.description }}</div>
+    </div>
 
-    <mat-form-field appearance="fill" class="w-full">
-      <mat-label>Password</mat-label>
-      <input
-        matInput
-        formControlName="password"
-        type="{{ passwordHide ? 'password' : 'text' }}"
-        placeholder="Password"
-      />
-      <mat-icon matPrefix>lock</mat-icon>
-      <mat-icon (click)="passwordHide = !passwordHide" matSuffix>{{
-        passwordHide ? "visibility_off" : "visibility"
-      }}</mat-icon>
-    </mat-form-field>
+    <div class="form-group">
+      <label>Full Name</label>
+      <div class="input-with-icon">
+        <i class="fas fa-user"></i>
+        <input 
+          type="text"
+          placeholder="Enter your full name"
+          formControlName="userName"
+        >
+      </div>
+    </div>
 
-    <mat-form-field appearance="fill" class="w-full">
-      <mat-label>Confirm Password</mat-label>
-      <input
-        matInput
-        formControlName="confirmPassword"
-        type="{{ confirmPasswordHide ? 'password' : 'text' }}"
-        placeholder="Confirm Password"
-      />
-      <mat-icon matPrefix>lock</mat-icon>
-      <mat-icon
-        (click)="confirmPasswordHide = !confirmPasswordHide"
-        matSuffix
-        >{{ confirmPasswordHide ? "visibility_off" : "visibility" }}</mat-icon
-      >
-    </mat-form-field>
+    <div class="form-group">
+      <label>Email</label>
+      <div class="input-with-icon">
+        <i class="fas fa-envelope"></i>
+        <input 
+          type="email"
+          placeholder="Enter your email"
+          formControlName="email"
+        >
+      </div>
+    </div>
 
-    <span
-      class="text-red-600"
-      *ngIf="
-        registerForm.hasError('passwordMismatch') &&
-        registerForm.get('confirmPassword')?.dirty &&
-        registerForm.get('confirmPassword')?.touched
-      "
+    <!-- <div class="form-group">
+      <label>Roles</label>
+      <div class="input-with-icon">
+        <i class="fas fa-users"></i>
+        <select multiple formControlName="roles" class="role-select">
+          <option *ngFor="let role of (role$ | async)" [value]="role.roleName">
+            {{ role.roleName }}
+          </option>
+        </select>
+      </div>
+    </div> -->
+
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-with-icon">
+        <i class="fas fa-lock"></i>
+        <input 
+          [type]="passwordHide ? 'password' : 'text'"
+          placeholder="Enter your password"
+          formControlName="password"
+        >
+        <button 
+          type="button"
+          class="password-toggle"
+          (click)="passwordHide = !passwordHide"
+        >
+          <i [class]="passwordHide ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <div class="input-with-icon">
+        <i class="fas fa-lock"></i>
+        <input 
+          [type]="confirmPasswordHide ? 'password' : 'text'"
+          placeholder="Confirm your password"
+          formControlName="confirmPassword"
+        >
+        <button 
+          type="button"
+          class="password-toggle"
+          (click)="confirmPasswordHide = !confirmPasswordHide"
+        >
+          <i [class]="confirmPasswordHide ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+        </button>
+      </div>
+    </div>
+
+    <span 
+      class="password-mismatch"
+      *ngIf="registerForm.hasError('passwordMismatch') && 
+             registerForm.get('confirmPassword')?.dirty && 
+             registerForm.get('confirmPassword')?.touched"
     >
-      Password don't match</span
-    >
-    <button
-      [disabled]="!registerForm.valid"
-      class="w-full border-collapse text-white rounded-md border-slate-200 disabled:bg-purple-400 py-2 px-3 bg-purple-700"
-      type="submit"
-    >
+      Passwords don't match
+    </span>
+
+    <button type="submit" class="login-button" [disabled]="registerForm.invalid">
       Register
     </button>
-    <div class="my-4">
-      <span class="text-slate-600"> Already have an account? </span>
-      <a href="" class="text-purple-700" [routerLink]="['/login']">Login</a>
+
+    <div class="register-prompt">
+      Already have an account? <a routerLink="/login">Sign in</a>
     </div>
   </form>
 </div>

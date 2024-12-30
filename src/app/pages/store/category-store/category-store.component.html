@@ -1,0 +1,38 @@
+<div class="bg-light p-4 mb-30">
+  <form>
+    <div
+      class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
+    >
+      <input
+        type="checkbox"
+        class="custom-control-input"
+        checked
+        id="size-all"
+      />
+      <label class="custom-control-label" for="size-all">All Category</label>
+      <!-- <span class="badge border font-weight-normal">{{categories}}</span> -->
+    </div>
+    <div
+      *ngFor="let category of categories"
+      class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
+    >
+      <input
+        type="checkbox"
+        class="custom-control-input"
+        id="{{ category.maDanhMuc }}"
+      />
+      <label class="custom-control-label" for="size-1">
+        <a class="link-category"
+        [routerLink]="['/store/1']"
+        [queryParams]="{ category: category.maDanhMuc }"
+      >
+        {{ category.tenDanhMuc }}
+      </a>
+              </label
+      >
+      <span class="badge border font-weight-normal">{{
+        category.soLuong
+      }}</span>
+    </div>
+  </form>
+</div>

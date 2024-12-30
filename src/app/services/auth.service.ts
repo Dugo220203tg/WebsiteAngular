@@ -1,6 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development.js';
@@ -8,7 +8,7 @@ import { LoginRequest } from '../interfaces/login-request';
 import { AuthResponseTS } from '../interfaces/auth-response.ts';
 import { RegisterRequest } from '../interfaces/register-request.js';
 import { AccountDetails } from '../interfaces/account-detail.js';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { ResetPasswordRequest } from '../interfaces/ResetPasswordRequest.js';
 import { ChangePasswordRequest } from '../interfaces/change-password-request.js';
 
@@ -23,7 +23,50 @@ export class AuthService {
     private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error occurred';
 
+    if (error.error instanceof ErrorEvent) {
+      // Client-side or network error
+      if (!navigator.onLine) {
+        errorMessage = 'No internet connection. Please check your network.';
+      } else {
+        errorMessage = `Network error: ${error.error.message}`;
+      }
+    } else {
+      // Backend returned unsuccessful response code
+      switch (error.status) {
+        case 0:
+          errorMessage = 'Network error occurred. Please check your connection.';
+          break;
+        case 400:
+          errorMessage = error.error?.message || 'Invalid request';
+          break;
+        case 401:
+          errorMessage = 'Session expired. Please login again.';
+          break;
+        case 403:
+          errorMessage = 'You don\'t have permission to access this resource';
+          break;
+        case 404:
+          errorMessage = 'Resource not found';
+          break;
+        case 500:
+          errorMessage = 'Server error. Please try again later';
+          break;
+        default:
+          errorMessage = `Server error: ${error.message}`;
+      }
+    }
+
+    console.error('Auth service error:', {
+      status: error.status,
+      message: errorMessage,
+      error: error
+    });
+
+    return throwError(() => new Error(errorMessage));
+  }
   login(data: LoginRequest): Observable<AuthResponseTS> {
     const url = `${this.apiUrl}KhachHangs/Login`;
     return this.http.post<AuthResponseTS>(url, data).pipe(
@@ -35,44 +78,58 @@ export class AuthService {
         }
         return response;
       }),
-      catchError((error) => {
-        console.error('Login error:', error);
-        return throwError(() => error);
-      })
+      catchError(this.handleError.bind(this))
     );
   }
-  
+
   register(data: RegisterRequest): Observable<AuthResponseTS> {
     const url = `${this.apiUrl}KhachHangs/RegisterAccount`;
-    return this.http.post<AuthResponseTS>(url, data);
-  }
-
-  resetPassword = (data: ResetPasswordRequest): Observable<AuthResponseTS> => this.http.post<AuthResponseTS>(`${this.apiUrl}KhachHangs/ResetPassword`, data);
-  changePassword = (data: ChangePasswordRequest): Observable<AuthResponseTS> => this.http.post<AuthResponseTS>(`${this.apiUrl}KhachHangs/ChangePassword`, data);
-  forgotPassword = (email : string): Observable<AuthResponseTS> => this.http.post<AuthResponseTS>(`${this.apiUrl}KhachHangs/ForgotPassword/forgot-password`, {email,});
-
-  getDetail(): Observable<AccountDetails> {
-    const token = this.getToken();
-    if (!token) {
-      return throwError(() => new Error('No token found'));
-    }
-
-    const url = `${this.apiUrl}KhachHangs/GetAccountDetail`;
-    // console.log('Calling API URL:', url);
-    // console.log('With token:', token);
-
-    // Add headers explicitly
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    return this.http.get<AccountDetails>(url, { headers }).pipe(
-      catchError((error) => {
-        console.error('API Error:', error);
-        return throwError(() => new Error('Failed to load account details'));
-      })
+    return this.http.post<AuthResponseTS>(url, data).pipe(
+      catchError(this.handleError.bind(this))
     );
   }
 
-  getUserDetail = (): { id: string; fullname: string; email: string; role: string; phoneNumber: string } | null => {
+  resetPassword(data: ResetPasswordRequest): Observable<AuthResponseTS> {
+    return this.http.post<AuthResponseTS>(
+      `${this.apiUrl}KhachHangs/ResetPassword`,
+      data
+    ).pipe(catchError(this.handleError.bind(this)));
+  }
+    changePassword(data: ChangePasswordRequest): Observable<AuthResponseTS> {
+      return this.http.post<AuthResponseTS>(
+        `${this.apiUrl}KhachHangs/ChangePassword`,
+        data
+      ).pipe(catchError(this.handleError.bind(this)));
+    }
+  
+    forgotPassword(email: string): Observable<AuthResponseTS> {
+      return this.http.post<AuthResponseTS>(
+        `${this.apiUrl}KhachHangs/ForgotPassword/forgot-password`,
+        { email }
+      ).pipe(catchError(this.handleError.bind(this)));
+    }
+
+    getDetail(): Observable<AccountDetails> {
+      const token = this.getToken();
+      if (!token) {
+        return throwError(() => new Error('No authentication token found. Please login again.'));
+      }
+  
+      const url = `${this.apiUrl}KhachHangs/GetAccountDetail`;
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  
+      return this.http.get<AccountDetails>(url, { headers }).pipe(
+        catchError(this.handleError.bind(this))
+      );
+    }
+
+  getUserDetail = (): {
+    id: string;
+    fullname: string;
+    email: string;
+    role: string;
+    phoneNumber: string;
+  } | null => {
     if (!this.isBrowser()) return null;
     const token = this.getToken();
     if (!token) return null;
@@ -91,7 +148,6 @@ export class AuthService {
       return null;
     }
   };
-  
 
   isTokenExpired(): boolean {
     if (!this.isBrowser()) return true;
@@ -100,10 +156,13 @@ export class AuthService {
     try {
       const decoded: any = jwtDecode(token);
       const isTokenExpired = Date.now() >= decoded.exp * 1000;
+      console.log('Current time (ms):', Date.now());
+      console.log('Token expiration time (ms):', decoded.exp * 1000);
+
       console.log('Token expiration check:', {
         current: Date.now(),
         tokenExp: decoded.exp * 1000,
-        isExpired: isTokenExpired
+        isExpired: isTokenExpired,
       });
       return isTokenExpired;
     } catch (error) {
@@ -111,7 +170,7 @@ export class AuthService {
       return true;
     }
   }
-  
+
   isLoggedIn = (): boolean => {
     if (!this.isBrowser()) return false;
     const token = this.getToken();
@@ -121,44 +180,51 @@ export class AuthService {
     //console.log('Is Logged In:', isLoggedIn);
     return isLoggedIn;
   };
-  getRoles = (): string[] | null =>{
+  getRoles = (): string[] | null => {
     const token = this.getToken();
-    if(!token) return null;
-    const decodedToken:any = jwtDecode(token);
+    if (!token) return null;
+    const decodedToken: any = jwtDecode(token);
     return decodedToken.role || null;
-  }
+  };
   logout(): void {
     if (this.isBrowser()) {
       localStorage.removeItem(this.userKey);
     }
   }
-  getAll =():Observable<AccountDetails[]> => 
-    this.http.get<AccountDetails[]>('${this.apiUrl}/account');
+  getAll(): Observable<AccountDetails[]> {
+    return this.http.get<AccountDetails[]>(`${this.apiUrl}/account`)
+      .pipe(catchError(this.handleError.bind(this)));
+  }
 
-  refreshToken = (data: {
+  refreshToken(data: {
     email: string;
     token: string;
     refreshToken: string;
-  }): Observable<AuthResponseTS> => this.http.post<AuthResponseTS>('${this.apiUrl}/KhachHangs/refresh-token', data);
+  }): Observable<AuthResponseTS> {
+    return this.http.post<AuthResponseTS>(
+      `${this.apiUrl}/KhachHangs/refresh-token`,
+      data
+    ).pipe(catchError(this.handleError.bind(this)));
+  }
 
   getToken = (): string | null => {
     if (!this.isBrowser()) return null;
     const user = localStorage.getItem(this.userKey);
-    if(!user) return null;
+    if (!user) return null;
     try {
       const getUserDetail = JSON.parse(user);
-      return getUserDetail.token; 
+      return getUserDetail.token;
     } catch (error) {
       console.error('Error parsing user token:', error);
       return null;
     }
-  }
+  };
   getRefreshToken = (): string | null => {
     const user = localStorage.getItem(this.userKey);
-    if(!user) return null;
+    if (!user) return null;
     const getUserDetail: AuthResponseTS = JSON.parse(user);
     return getUserDetail.refreshToken;
-  }
+  };
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
