@@ -1,0 +1,14 @@
+.image-product {
+  width: 140px !important;
+}
+.wish-list {
+  display: grid !important;
+  place-items: center !important;
+}
+.text-truncate {
+  display: inline-flex;
+  max-width: 650px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

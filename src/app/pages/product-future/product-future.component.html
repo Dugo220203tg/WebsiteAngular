@@ -13,16 +13,22 @@
           alt="{{ product.tenHH }}"
         />
         <div class="product-action">
-          <a class="btn btn-outline-dark btn-square" href="">
+          <a
+            class="btn btn-outline-dark btn-square"
+            href=""
+            (click)="addToCart(product.maHH, $event)"
+            [class.disabled]="isLoading"
+            [attr.aria-disabled]="isLoading"
+          >
             <i class="fa fa-shopping-cart"></i>
           </a>
           <a
-          class="btn btn-outline-dark btn-square"
-          href=""
-          (click)="addToWishList(product.maHH, $event)"
-          [class.disabled]="isLoading"
-          [attr.aria-disabled]="isLoading"
-        >
+            class="btn btn-outline-dark btn-square"
+            href=""
+            (click)="addToWishList(product.maHH, $event)"
+            [class.disabled]="isLoading"
+            [attr.aria-disabled]="isLoading"
+          >
             <i class="far fa-heart" [class.fa-spin]="isLoading"></i>
           </a>
           <a class="btn btn-outline-dark btn-square" href="">

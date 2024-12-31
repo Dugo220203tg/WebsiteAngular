@@ -3,6 +3,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductRequest } from '../../interfaces/product';
 import { WishListService } from '../../services/wishList.service';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-product-future',
@@ -25,7 +26,10 @@ export class ProductFutureComponent implements OnInit {
   isLoading: boolean = false;
   error: string | null = null;
 
-  constructor(private wishListService: WishListService) {}
+  constructor(
+    private wishListService: WishListService,
+    private cartService: CartService
+  ) {}
   addToWishList(productId: number, event: Event): void {
     event.preventDefault(); // Prevent default link behavior
     this.isLoading = true;
@@ -41,7 +45,24 @@ export class ProductFutureComponent implements OnInit {
         this.isLoading = false;
         this.error = 'Failed to add product to wishlist';
         console.error('Error adding to wishlist:', error);
-      }
+      },
+    });
+  }
+  addToCart(productId: number, event: Event): void {
+    event.preventDefault(); // Prevent default link behavior
+    this.isLoading = true;
+    this.error = null;
+    this.cartService.addToCart(productId, 1).subscribe({
+      next: () => {
+        this.isLoading = false;
+        // Optional: Add visual feedback that item was added to cart
+        alert('Product added to cart successfully!');
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.error = 'Failed to add product to cart';
+        console.error('Error adding to cart:', error);
+      },
     });
   }
   ngOnInit(): void {
@@ -81,6 +102,8 @@ export class ProductFutureComponent implements OnInit {
   }
 
   generateStars(rating: number): string[] {
-    return Array(5).fill('').map((_, i) => i < rating ? 'full' : 'empty');
+    return Array(5)
+      .fill('')
+      .map((_, i) => (i < rating ? 'full' : 'empty'));
   }
 }

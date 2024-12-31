@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ProductService } from '../../services/product.service';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -18,6 +19,8 @@ export class ProductDetailComponent implements OnInit {
   productDetail$: Observable<ProductDetailRequest | null> = of(null);
   error: string | null = null;
   activeTab: string = 'tab-pane-1';
+  loading: boolean = false;
+  quantity: number = 1; // Default quantity
 
   switchTab(tabId: string, event: Event) {
     event.preventDefault();
@@ -25,7 +28,8 @@ export class ProductDetailComponent implements OnInit {
   }
   constructor(
     private productService: ProductService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cartService: CartService,
   ) {}
 
   ngOnInit(): void {
@@ -71,5 +75,32 @@ export class ProductDetailComponent implements OnInit {
     }
 
     return stars;
+  }
+  incrementQuantity(): void {
+    this.quantity++;
+  }
+
+  decrementQuantity(): void {
+    if (this.quantity > 1) {
+      this.quantity--;
+    }
+  }
+
+  addToCart(productId: number, event: Event): void {
+    event.preventDefault();
+    this.loading = true;
+    this.error = null;
+
+    this.cartService.addToCart(productId, this.quantity).subscribe({
+      next: () => {
+        this.loading = false;
+        alert('Product added to cart successfully!');
+      },
+      error: (error) => {
+        this.loading = false;
+        this.error = 'Failed to add product to cart';
+        console.error('Error adding to cart:', error);
+      },
+    });
   }
 }

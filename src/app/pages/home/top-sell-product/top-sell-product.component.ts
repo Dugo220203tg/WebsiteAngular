@@ -4,6 +4,7 @@ import { ProductService } from '../../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { WishListService } from '../../../services/wishList.service';
+import { CartService } from '../../../services/cart.service';
 
 @Component({
   selector: 'app-top-sell-product',
@@ -19,8 +20,11 @@ export class TopSellProductComponent {
   @Input() itemsPerPage: number = 12;
 
   paginatedProducts: ProductRequest[] = [];
-  constructor(private productService: ProductService,
-    private wishListService: WishListService) {}
+  constructor(
+    private productService: ProductService,
+    private wishListService: WishListService,
+    private cartService: CartService
+  ) {}
   loading: boolean = false;
   error: string | null = null;
   ngOnInit(): void {
@@ -30,11 +34,11 @@ export class TopSellProductComponent {
   loadProducts(): void {
     this.loading = true;
     this.error = null;
-  
+
     this.productService.getTopSellProducts().subscribe({
       next: (products) => {
         this.products = products;
-        this.paginatedProducts = this.products.slice(0, this.itemsPerPage); 
+        this.paginatedProducts = this.products.slice(0, this.itemsPerPage);
         this.loading = false;
       },
       error: (error) => {
@@ -43,7 +47,7 @@ export class TopSellProductComponent {
       },
     });
   }
-  
+
   getFirstImage(imageString: string): string {
     return imageString.split(',')[0];
   }
@@ -63,7 +67,7 @@ export class TopSellProductComponent {
     event.preventDefault();
     this.loading = true;
     this.error = null;
-  
+
     this.wishListService.addToWishList(productId).subscribe({
       next: (response) => {
         this.loading = false;
@@ -77,7 +81,24 @@ export class TopSellProductComponent {
         if (error.error && error.error.message) {
           this.error = error.error.message;
         }
-      }
+      },
+    });
+  }
+  addToCart(productId: number, event: Event): void {
+    event.preventDefault(); // Prevent default link behavior
+    this.loading = true;
+    this.error = null;
+    this.cartService.addToCart(productId, 1).subscribe({
+      next: () => {
+        this.loading = false;
+        // Optional: Add visual feedback that item was added to cart
+        alert('Product added to cart successfully!');
+      },
+      error: (error) => {
+        this.loading = false;
+        this.error = 'Failed to add product to cart';
+        console.error('Error adding to cart:', error);
+      },
     });
   }
 }

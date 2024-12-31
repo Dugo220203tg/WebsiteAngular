@@ -54,4 +54,11 @@ export class WishListComponent implements OnInit {
       },
     });
   }
+  getFirstImage(imageString: string): string {
+    return imageString.split(',')[0];
+  }
+
+  getImagePath(maHH: number, hinh: string): string {
+    return `assets/img/HangHoa/${maHH}/${this.getFirstImage(hinh)}`;
+  }
 }
