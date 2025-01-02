@@ -1,7 +1,11 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
 import { WishListRequest } from '../interfaces/wishList';
 import { AuthService } from './auth.service';
@@ -15,14 +19,14 @@ export class WishListService {
     : `${environment.apiUrl}/`;
   private wishlistCountSubject = new BehaviorSubject<number>(0);
   wishlistCount$ = this.wishlistCountSubject.asObservable();
-  
+
   constructor(
     private http: HttpClient,
     private authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Subscribe to auth state changes to handle wishlist count
-    this.authService.isAuthenticated$.subscribe(isAuthenticated => {
+    this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
       if (!isAuthenticated) {
         this.wishlistCountSubject.next(0);
       }
@@ -32,7 +36,7 @@ export class WishListService {
   private checkAuthentication(): Observable<boolean> {
     const token = this.authService.getToken();
     const user = this.authService.getUserDetail();
-    
+
     if (!token || !user) {
       return of(false);
     }
@@ -47,14 +51,14 @@ export class WishListService {
   /** Fetch wishlist by account ID */
   getWishList(): Observable<WishListRequest[]> {
     return this.checkAuthentication().pipe(
-      switchMap(isAuthenticated => {
+      switchMap((isAuthenticated) => {
         if (!isAuthenticated) {
-          return of([]);  // Return empty array if not authenticated
+          return of([]); // Return empty array if not authenticated
         }
-        
+
         const wishlistUrl = `${this.apiUrl}WishList/GetWishListByAccountId`;
-        return this.http.get<WishListRequest[]>(wishlistUrl, { 
-          headers: this.getAuthHeaders() 
+        return this.http.get<WishListRequest[]>(wishlistUrl, {
+          headers: this.getAuthHeaders(),
         });
       }),
       catchError(this.handleError)
@@ -68,41 +72,54 @@ export class WishListService {
   /** Add a product to the wishlist */
   addToWishList(productId: number): Observable<any> {
     return this.checkAuthentication().pipe(
-      switchMap(isAuthenticated => {
+      switchMap((isAuthenticated) => {
         if (!isAuthenticated) {
-          return throwError(() => new Error('Please login to add items to wishlist'));
+          return throwError(() => new Error('Please login to add items to wishlist.'));
         }
-
+  
         const user = this.authService.getUserDetail();
-        const wishlistUrl = `${this.apiUrl}WishList/AddToWishList/Add`;
-        
+        const wishlistUrl = `${this.apiUrl}WishList/AddToWishList`;
+  
         const request = {
-          maKh: user!.id,  // Non-null assertion is safe here due to authentication check
+          maKh: user!.id,
           maHh: productId,
           ngay: new Date().toISOString(),
         };
-
-        return this.http.post(wishlistUrl, request, { 
-          headers: this.getAuthHeaders() 
-        });
+  
+        return this.http.post(wishlistUrl, request, {
+          headers: this.getAuthHeaders(),
+        }).pipe(
+          catchError((error) => {
+            if (error.status === 409) {
+              return throwError(() => new Error('This product is already in your wishlist.'));
+            }
+            return throwError(() => error);
+          })
+        );
       }),
       catchError(this.handleError)
     );
   }
+  
+  
 
   /** Remove a product from the wishlist */
   deleteFromWishList(productId: number): Observable<any> {
     return this.checkAuthentication().pipe(
-      switchMap(isAuthenticated => {
+      switchMap((isAuthenticated) => {
         if (!isAuthenticated) {
-          return throwError(() => new Error('Please login to remove items from wishlist'));
+          return throwError(
+            () => new Error('Please login to remove items from wishlist')
+          );
         }
 
         const user = this.authService.getUserDetail();
-        const wishlistUrl = `${this.apiUrl}WishList/RemoveFromWishList/Remove/${user!.id}/${productId}`;
-        
-        return this.http.delete(wishlistUrl, { 
-          headers: this.getAuthHeaders() 
+        const wishlistUrl = `${this.apiUrl}WishList/RemoveFromWishList/Remove/${
+          user!.id
+        }/${productId}`;
+
+        return this.http.delete(wishlistUrl, {
+          headers: this.getAuthHeaders(),
         });
       }),
       catchError(this.handleError)

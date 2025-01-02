@@ -11,10 +11,11 @@ import { ResetPasswordComponent } from './pages/reset-password/reset-password.co
 import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 import { StoreComponent } from './pages/store/store.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
-import { CheckOutComponent } from './pages/check-out/check-out.component';
+import { CheckoutComponent } from './pages/check-out/check-out.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { WishListComponent } from './pages/wish-list/wish-list.component';
+import { SuccessComponent } from './pages/check-out/success/success.component';
 export const routes: Routes = [
   {
     path: '',
@@ -73,7 +74,11 @@ export const routes: Routes = [
   },
   {
     path: 'checkout',
-    component: CheckOutComponent,
+    component: CheckoutComponent,
+  },
+  {
+    path: 'checkout/success',
+    component:SuccessComponent,
   },
   {
     path: 'cart',

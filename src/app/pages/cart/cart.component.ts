@@ -52,7 +52,7 @@ export class CartComponent implements OnInit {
     this.error = null;
     this.cartService.getCart().subscribe({
       next: (carts) => {
-        this.carts = carts;
+        this.carts = carts; // Danh sách trống không gây lỗi
         this.loading = false;
       },
       error: (error) => {
@@ -62,6 +62,7 @@ export class CartComponent implements OnInit {
       },
     });
   }
+  
 
   applyCoupon(): void {
     if (!this.couponCode.trim()) {

@@ -1,0 +1,45 @@
+.alert {
+    margin-top: 1rem;
+  }
+  
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+  .position-fixed {
+    position: fixed !important;
+  }
+  
+  .top-0 {
+    top: 1rem; /* Khoảng cách từ phía trên */
+  }
+  
+  .end-0 {
+    right: 1rem; /* Khoảng cách từ bên phải */
+  }
+  
+  .shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .m-3 {
+    margin: 1rem !important;
+  }
+  .fade {
+    transition: opacity 0.3s ease-in-out;
+  }  

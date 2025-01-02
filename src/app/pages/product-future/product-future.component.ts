@@ -4,13 +4,15 @@ import { RouterLink } from '@angular/router';
 import { ProductRequest } from '../../interfaces/product';
 import { WishListService } from '../../services/wishList.service';
 import { CartService } from '../../services/cart.service';
+import { AlertComponent } from '../../components/alert/alert.component';
+import { Alert } from '../../interfaces/alert';
 
 @Component({
   selector: 'app-product-future',
   templateUrl: './product-future.component.html',
   styleUrls: ['./product-future.component.css'],
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, AlertComponent],
 })
 export class ProductFutureComponent implements OnInit {
   @Input() products: ProductRequest[] = [];
@@ -26,28 +28,50 @@ export class ProductFutureComponent implements OnInit {
   isLoading: boolean = false;
   error: string | null = null;
 
+  alerts: Alert[] = [];
+  nextAlertId = 1;
+  
   constructor(
     private wishListService: WishListService,
     private cartService: CartService
   ) {}
+
+  showAlert(message: string, type: 'success' | 'error' | 'warning' | 'info'): void {
+    const alert: Alert = { id: this.nextAlertId++, message, type };
+    this.alerts.push(alert);
+
+    // Auto-remove alert after 3 seconds
+    setTimeout(() => {
+      this.alerts = this.alerts.filter(a => a.id !== alert.id);
+    }, 3000);
+  }
+  
+
   addToWishList(productId: number, event: Event): void {
     event.preventDefault(); // Prevent default link behavior
     this.isLoading = true;
     this.error = null;
 
     this.wishListService.addToWishList(productId).subscribe({
-      next: () => {
+      next: (response) => {
         this.isLoading = false;
-        // Optional: Add visual feedback that item was added to wishlist
-        alert('Product added to wishlist successfully!');
+        this.showAlert(
+          response.message || 'Product added to wishlist successfully!',
+          'success'
+        );
       },
       error: (error) => {
         this.isLoading = false;
-        this.error = 'Failed to add product to wishlist';
-        console.error('Error adding to wishlist:', error);
+
+        if (error.status === 409) {
+          this.showAlert('This product is already in your wishlist.', 'error');
+        } else {
+          this.showAlert('Failed to add product to wishlist.', 'error');
+        }
       },
     });
   }
+
   addToCart(productId: number, event: Event): void {
     event.preventDefault(); // Prevent default link behavior
     this.isLoading = true;
@@ -55,13 +79,11 @@ export class ProductFutureComponent implements OnInit {
     this.cartService.addToCart(productId, 1).subscribe({
       next: () => {
         this.isLoading = false;
-        // Optional: Add visual feedback that item was added to cart
-        alert('Product added to cart successfully!');
+        this.showAlert('Product added to cart successfully!', 'success');
       },
       error: (error) => {
         this.isLoading = false;
-        this.error = 'Failed to add product to cart';
-        console.error('Error adding to cart:', error);
+        this.showAlert('Failed to add product to cart.', 'error');
       },
     });
   }

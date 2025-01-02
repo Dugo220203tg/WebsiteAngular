@@ -1,228 +1,209 @@
-<!-- Breadcrumb Start -->
-<div class="container-fluid">
-  <div class="row px-xl-5">
-    <div class="col-12">
-      <nav class="breadcrumb bg-light mb-30">
-        <a class="breadcrumb-item text-dark" href="#">Home</a>
-        <a class="breadcrumb-item text-dark" href="#">Shop</a>
-        <span class="breadcrumb-item active">Checkout</span>
-      </nav>
-    </div>
-  </div>
-</div>
-<!-- Breadcrumb End -->
-<!-- Checkout Start -->
 <div class="container-fluid">
   <div class="row px-xl-5">
     <div class="col-lg-8">
-      <h5 class="section-title position-relative text-uppercase mb-3">
-        <span class="bg-secondary pr-3">Billing Address</span>
-      </h5>
-      <div class="bg-light p-30 mb-5">
-        <div class="row">
-          <div class="col-md-6 form-group">
-            <label>First Name</label>
-            <input class="form-control" type="text" placeholder="John" />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>Last Name</label>
-            <input class="form-control" type="text" placeholder="Doe" />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>E-mail</label>
-            <input
-              class="form-control"
-              type="text"
-              placeholder="example@email.com"
-            />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>Mobile No</label>
-            <input
-              class="form-control"
-              type="text"
-              placeholder="+123 456 789"
-            />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>Address Line 1</label>
-            <input class="form-control" type="text" placeholder="123 Street" />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>Address Line 2</label>
-            <input class="form-control" type="text" placeholder="123 Street" />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>Country</label>
-            <select class="custom-select">
-              <option selected>United States</option>
-              <option>Afghanistan</option>
-              <option>Albania</option>
-              <option>Algeria</option>
-            </select>
-          </div>
-          <div class="col-md-6 form-group">
-            <label>City</label>
-            <input class="form-control" type="text" placeholder="New York" />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>State</label>
-            <input class="form-control" type="text" placeholder="New York" />
-          </div>
-          <div class="col-md-6 form-group">
-            <label>ZIP Code</label>
-            <input class="form-control" type="text" placeholder="123" />
-          </div>
-          <div class="col-md-12 form-group">
-            <div class="custom-control custom-checkbox">
-              <input
-                type="checkbox"
-                class="custom-control-input"
-                id="newaccount"
-              />
-              <label class="custom-control-label" for="newaccount"
-                >Create an account</label
-              >
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="shipto" />
-              <label
-                class="custom-control-label"
-                for="shipto"
-                data-toggle="collapse"
-                data-target="#shipping-address"
-                >Ship to different address</label
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="collapse mb-5" id="shipping-address">
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
         <h5 class="section-title position-relative text-uppercase mb-3">
-          <span class="bg-secondary pr-3">Shipping Address</span>
+          <span class="bg-secondary pr-3">Billing Address</span>
         </h5>
-        <div class="bg-light p-30">
+        <div class="bg-light p-30 mb-5">
           <div class="row">
+            <!-- Full Name (matches API's fullName field) -->
             <div class="col-md-6 form-group">
-              <label>First Name</label>
-              <input class="form-control" type="text" placeholder="John" />
-            </div>
-            <div class="col-md-6 form-group">
-              <label>Last Name</label>
-              <input class="form-control" type="text" placeholder="Doe" />
-            </div>
-            <div class="col-md-6 form-group">
-              <label>E-mail</label>
+              <label>Full Name</label>
               <input
                 class="form-control"
                 type="text"
-                placeholder="example@email.com"
+                formControlName="fullName"
+                placeholder="John Doe"
+                [class.is-invalid]="
+                  checkoutForm.get('fullName')?.invalid &&
+                  checkoutForm.get('fullName')?.touched
+                "
               />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  checkoutForm.get('fullName')?.invalid &&
+                  checkoutForm.get('fullName')?.touched
+                "
+              >
+                Full name is required
+              </div>
             </div>
+            <!-- Phone -->
             <div class="col-md-6 form-group">
-              <label>Mobile No</label>
+              <label>Số điện thoại</label>
               <input
                 class="form-control"
                 type="text"
-                placeholder="+123 456 789"
+                formControlName="dienThoai"
+                placeholder="0987654321"
+                [class.is-invalid]="
+                  checkoutForm.get('dienThoai')?.invalid &&
+                  checkoutForm.get('dienThoai')?.touched
+                "
               />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  checkoutForm.get('dienThoai')?.invalid &&
+                  checkoutForm.get('dienThoai')?.touched
+                "
+              >
+                Số điện thoại không hợp lệ
+              </div>
             </div>
+
+            <!-- Address -->
             <div class="col-md-6 form-group">
-              <label>Address Line 1</label>
+              <label>Địa chỉ</label>
               <input
                 class="form-control"
                 type="text"
-                placeholder="123 Street"
+                formControlName="diaChi"
+                placeholder="Số nhà, Đường, Phường/Xã"
+                [class.is-invalid]="
+                  checkoutForm.get('diaChi')?.invalid &&
+                  checkoutForm.get('diaChi')?.touched
+                "
               />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  checkoutForm.get('diaChi')?.invalid &&
+                  checkoutForm.get('diaChi')?.touched
+                "
+              >
+                Địa chỉ là bắt buộc
+              </div>
             </div>
+
+            <!-- Note -->
             <div class="col-md-6 form-group">
-              <label>Address Line 2</label>
+              <label>Ghi chú</label>
               <input
                 class="form-control"
                 type="text"
-                placeholder="123 Street"
+                formControlName="ghiChu"
+                placeholder="Ghi chú về đơn hàng"
               />
             </div>
+
+            <!-- Shipping Method -->
             <div class="col-md-6 form-group">
-              <label>Country</label>
-              <select class="custom-select">
-                <option selected>United States</option>
-                <option>Afghanistan</option>
-                <option>Albania</option>
-                <option>Algeria</option>
+              <label>Phương thức vận chuyển</label>
+              <select class="form-control" formControlName="cachVanChuyen">
+                <option value="standard">Giao hàng tiêu chuẩn - $10.00</option>
+                <option value="shipcode">Ship COD</option>
               </select>
             </div>
-            <div class="col-md-6 form-group">
-              <label>City</label>
-              <input class="form-control" type="text" placeholder="New York" />
-            </div>
-            <div class="col-md-6 form-group">
-              <label>State</label>
-              <input class="form-control" type="text" placeholder="New York" />
-            </div>
-            <div class="col-md-6 form-group">
-              <label>ZIP Code</label>
-              <input class="form-control" type="text" placeholder="123" />
-            </div>
           </div>
         </div>
-      </div>
+
+        <!-- Payment Section -->
+        <h5 class="section-title position-relative text-uppercase mb-3">
+          <span class="bg-secondary pr-3">Phương thức thanh toán</span>
+        </h5>
+        <div class="bg-light p-30 mb-5">
+          <div class="form-group">
+            <div class="custom-control custom-radio">
+              <input
+                type="radio"
+                class="custom-control-input"
+                id="directcheck"
+                formControlName="payMethod"
+                value="directCheck"
+              />
+              <label class="custom-control-label" for="directcheck"
+                >Thanh toán trực tiếp</label
+              >
+            </div>
+            <div class="custom-control custom-radio">
+              <input
+                type="radio"
+                class="custom-control-input"
+                id="momo"
+                formControlName="payMethod"
+                value="momo"
+              />
+              <label class="custom-control-label" for="momo"
+                >Thanh toán qua Momo</label
+              >
+            </div>
+          </div>
+
+          <!-- Error Display -->
+          <div *ngIf="error" class="alert alert-danger mt-3">
+            {{ error }}
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            class="btn btn-block btn-primary font-weight-bold py-3"
+            type="submit"
+            [disabled]="checkoutForm.invalid || loading"
+          >
+            <span
+              *ngIf="loading"
+              class="spinner-border spinner-border-sm me-2"
+            ></span>
+            Đặt hàng
+          </button>
+        </div>
+      </form>
     </div>
+
+    <!-- Order Summary -->
     <div class="col-lg-4">
       <h5 class="section-title position-relative text-uppercase mb-3">
-        <span class="bg-secondary pr-3">Order Total</span>
+        <span class="bg-secondary pr-3">Tổng đơn hàng</span>
       </h5>
       <div class="bg-light p-30 mb-5">
         <!-- Product List -->
         <div class="border-bottom">
-          <h6 class="mb-3">Products</h6>
+          <h6 class="mb-3">Sản phẩm</h6>
           <div
             *ngFor="let cart of carts"
             class="d-flex justify-content-between mb-2"
           >
             <div>
               <p class="mb-0 text-truncate">
-                <span class="text-muted small">({{ cart.quantity }}x)\</span
+                <span class="text-muted small">({{ cart.quantity }}x)</span
                 >{{ cart.tenHH }}
               </p>
             </div>
             <p class="mb-0">
-              $ {{ cart.donGia * cart.quantity | number : "1.2-2" }}
+              {{ cart.donGia * cart.quantity | number : "1.2-2" }}₫
             </p>
           </div>
         </div>
 
         <!-- Summary Section -->
         <div class="border-bottom pt-3 pb-2">
-          <!-- Subtotal -->
           <div class="d-flex justify-content-between mb-3">
-            <h6>Subtotal</h6>
-            <h6>${{ subtotal | number : "1.2-2" }}</h6>
+            <h6>Tạm tính</h6>
+            <h6>{{ subtotal | number : "1.2-2" }}₫</h6>
           </div>
 
-          <!-- Coupon Discount if applied -->
           <div
             class="d-flex justify-content-between mb-3"
             *ngIf="couponDiscount > 0"
           >
             <h6>
-              Coupon Discount
+              Giảm giá
               <span class="text-muted small"
-                >({{ couponName }} - {{ couponPercentage }}%)</span
-              >
+                >({{ couponName }} - {{ couponPercentage }}%)
+              </span>
             </h6>
             <h6 class="text-success">
-              -${{ couponDiscount | number : "1.2-2" }}
+              -{{ couponDiscount | number : "1.2-2" }}₫
             </h6>
           </div>
 
-          <!-- Shipping Cost -->
           <div class="d-flex justify-content-between">
-            <h6 class="font-weight-medium">Shipping</h6>
+            <h6 class="font-weight-medium">Phí vận chuyển</h6>
             <h6 class="font-weight-medium">
-              ${{ shippingCost | number : "1.2-2" }}
+              {{ shippingCost | number : "1.2-2" }}₫
             </h6>
           </div>
         </div>
@@ -230,59 +211,23 @@
         <!-- Total -->
         <div class="pt-2">
           <div class="d-flex justify-content-between mt-2">
-            <h5>Total</h5>
-            <h5>${{ total | number : "1.2-2" }}</h5>
+            <h5>Tổng cộng</h5>
+            <h5>{{ total | number : "1.2-2" }}₫</h5>
           </div>
-        </div>
-      </div>
-      <div class="mb-5">
-        <h5 class="section-title position-relative text-uppercase mb-3">
-          <span class="bg-secondary pr-3">Payment</span>
-        </h5>
-        <div class="bg-light p-30">
-          <div class="form-group">
-            <div class="custom-control custom-radio">
-              <input
-                type="radio"
-                class="custom-control-input"
-                name="payment"
-                id="paypal"
-              />
-              <label class="custom-control-label" for="paypal">Paypal</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="custom-control custom-radio">
-              <input
-                type="radio"
-                class="custom-control-input"
-                name="payment"
-                id="directcheck"
-              />
-              <label class="custom-control-label" for="directcheck"
-                >Direct Check</label
-              >
-            </div>
-          </div>
-          <div class="form-group mb-4">
-            <div class="custom-control custom-radio">
-              <input
-                type="radio"
-                class="custom-control-input"
-                name="payment"
-                id="banktransfer"
-              />
-              <label class="custom-control-label" for="banktransfer"
-                >Bank Transfer</label
-              >
-            </div>
-          </div>
-          <button class="btn btn-block btn-primary font-weight-bold py-3">
-            Place Order
-          </button>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Checkout End -->
+
+<!-- Debug Information -->
+<div class="container-fluid mt-3" *ngIf="checkoutForm.valid">
+  <div class="row">
+    <div class="col-12">
+      <div class="bg-light p-3">
+        <h6>Debug - Form Data:</h6>
+        <pre>{{ prepareCheckoutData() | json }}</pre>
+      </div>
+    </div>
+  </div>
+</div>

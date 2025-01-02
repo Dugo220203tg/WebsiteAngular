@@ -1,42 +1,55 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
-import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
-import { AuthService } from "./auth.service";
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throwError } from "rxjs";
-import { environment } from "../../environments/environment.development";
-import { CartRequest } from "../interfaces/cart";
-import { isPlatformBrowser } from "@angular/common";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { AuthService } from './auth.service';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
+import { environment } from '../../environments/environment.development';
+import { CartRequest } from '../interfaces/cart';
+import { isPlatformBrowser } from '@angular/common';
 @Injectable({
-    providedIn: 'root'  // This makes the service available throughout the app
-  })
-  export class CartService {
-    private apiUrl: string = environment.apiUrl.endsWith('/')
-      ? environment.apiUrl
-      : `${environment.apiUrl}/`;
-  
-    private cartCountSubject = new BehaviorSubject<number>(0);
-    private cartTotalSubject = new BehaviorSubject<number>(0);
-    private couponSubject = new BehaviorSubject<any>(null);
-  
-    cartCount$ = this.cartCountSubject.asObservable();
-    cartTotal$ = this.cartTotalSubject.asObservable();
-    coupon$ = this.couponSubject.asObservable();
-  
-    constructor(
-      private http: HttpClient,
-      private authService: AuthService,
-      @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-      // Initialize coupon from localStorage during service construction
-      this.initializeCouponFromStorage();
-  
-      this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
-        if (!isAuthenticated) {
-          this.cartCountSubject.next(0);
-          this.cartTotalSubject.next(0);
-          this.clearStoredCoupon();
-        }
-      });
-    }
+  providedIn: 'root',
+})
+export class CartService {
+  private apiUrl: string = environment.apiUrl.endsWith('/')
+    ? environment.apiUrl
+    : `${environment.apiUrl}/`;
+
+  private cartCountSubject = new BehaviorSubject<number>(0);
+  private cartTotalSubject = new BehaviorSubject<number>(0);
+  private couponSubject = new BehaviorSubject<any>(null);
+
+  cartCount$ = this.cartCountSubject.asObservable();
+  cartTotal$ = this.cartTotalSubject.asObservable();
+  coupon$ = this.couponSubject.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    // Initialize coupon from localStorage during service construction
+    this.initializeCouponFromStorage();
+
+    this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (!isAuthenticated) {
+        this.cartCountSubject.next(0);
+        this.cartTotalSubject.next(0);
+        this.clearStoredCoupon();
+      }
+    });
+  }
 
   private checkAuthentication(): Observable<boolean> {
     const token = this.authService.getToken();
@@ -57,7 +70,7 @@ import { isPlatformBrowser } from "@angular/common";
     return this.checkAuthentication().pipe(
       switchMap((isAuthenticated) => {
         if (!isAuthenticated) {
-          return of([]);
+          return of([]); // Trả về danh sách trống nếu không xác thực
         }
 
         const cartUrl = `${this.apiUrl}Cart/GetCartData`;
@@ -69,6 +82,13 @@ import { isPlatformBrowser } from "@angular/common";
             tap((cart) => {
               this.updateCartCount(cart.length);
               this.updateCartTotal(this.calculateTotal(cart));
+            }),
+            catchError((error) => {
+              if (error.status === 404) {
+                this.updateCartCount(0);
+                return of([]);
+              }
+              return throwError(() => error);
             })
           );
       }),
@@ -157,25 +177,33 @@ import { isPlatformBrowser } from "@angular/common";
             () => new Error('Please login to add items to the cart')
           );
         }
-  
+
         const user = this.authService.getUserDetail();
         const cartUrl = `${this.apiUrl}Cart/AddToCart`;
-  
+
         const request = {
           maKh: user!.id,
           maHh: productId,
           quantity,
           ngay: new Date().toISOString(),
         };
-  
-        return this.http.post(cartUrl, request, {
-          headers: this.getAuthHeaders(),
-        });
+
+        return this.http
+          .post(cartUrl, request, {
+            headers: this.getAuthHeaders(),
+          })
+          .pipe(
+            tap(() => {
+              this.getCart().subscribe();
+            })
+          );
       }),
-      catchError(this.handleError)
+      catchError((error) => {
+        console.error('Error adding to cart:', error);
+        return throwError(() => error);
+      })
     );
   }
-  
 
   /** Remove a product from the wishlist */
   deleteFromCart(productId: number): Observable<boolean> {
@@ -220,35 +248,38 @@ import { isPlatformBrowser } from "@angular/common";
           return throwError(() => new Error('Please login to apply coupon'));
         }
         const couponUrl = `${this.apiUrl}Coupon/UseCoupon/${couponCode}`;
-  
-        return this.http.get<any>(couponUrl, {
-          headers: this.getAuthHeaders(),
-        }).pipe(
-          tap(response => {
-            if (response.status === 1) {
-              this.storeCoupon({
-                code: couponCode,
-                name: response.name,
-                percentage: response.price,
-                dateEnd: response.dateEnd
-              });
-            }
-          }),
-          catchError(error => {
-            if (error.status === 400) {
-              // Handle the specific message from the API
-              const errorMessage = error.error?.message || 'An error occurred while applying the coupon.';
-              return throwError(() => new Error(errorMessage));
-            }
-            // Re-throw other errors
-            return throwError(() => error);
+
+        return this.http
+          .get<any>(couponUrl, {
+            headers: this.getAuthHeaders(),
           })
-        );
+          .pipe(
+            tap((response) => {
+              if (response.status === 1) {
+                this.storeCoupon({
+                  code: couponCode,
+                  name: response.name,
+                  percentage: response.price,
+                  dateEnd: response.dateEnd,
+                });
+              }
+            }),
+            catchError((error) => {
+              if (error.status === 400) {
+                // Handle the specific message from the API
+                const errorMessage =
+                  error.error?.message ||
+                  'An error occurred while applying the coupon.';
+                return throwError(() => new Error(errorMessage));
+              }
+              // Re-throw other errors
+              return throwError(() => error);
+            })
+          );
       }),
       catchError(this.handleError)
     );
   }
-  
 
   private storeCoupon(couponData: any): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -305,5 +336,4 @@ import { isPlatformBrowser } from "@angular/common";
     console.error('Error:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
-
 }

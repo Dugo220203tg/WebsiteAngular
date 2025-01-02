@@ -11,7 +11,11 @@
             alt="{{ product.tenHH }}"
           />
           <div class="product-action">
-            <a class="btn btn-outline-dark btn-square" href="">
+            <a class="btn btn-outline-dark btn-square" href=""
+            (click)="addToCart(product.maHH, $event)"
+            [class.disabled]="loading"
+            [attr.aria-disabled]="loading"
+          >
               <i class="fa fa-shopping-cart"></i>
             </a>
             <a

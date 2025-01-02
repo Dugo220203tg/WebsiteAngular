@@ -1,6 +1,6 @@
 .text-truncate {
   display: inline-flex;
-  max-width: 350px;
+  max-width: 295px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
