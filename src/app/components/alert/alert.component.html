@@ -8,12 +8,19 @@
     'alert-info': alert.type === 'info'
   }"
   role="alert"
-  style="z-index: 1050; max-width: 300px;"
+  style="z-index: 1050; max-width: 450px"
 >
   <strong *ngIf="alert.type === 'success'">Success!</strong>
   <strong *ngIf="alert.type === 'error'">Error!</strong>
   <strong *ngIf="alert.type === 'warning'">Warning!</strong>
   <strong *ngIf="alert.type === 'info'">Info:</strong>
   {{ alert.message }}
-  <button type="button" class="btn-close" (click)="closeAlert(alert.id)" aria-label="Close">X</button>
+  <button
+    type="button"
+    class="btn-close"
+    (click)="closeAlert(alert.id)"
+    aria-label="Close"
+  >
+    X
+  </button>
 </div>
