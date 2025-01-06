@@ -33,8 +33,8 @@ export class CheckoutService {
       );
   }
 
-  processVnPayCallback(checkoutData: CheckoutModel): Observable<any> {
-    const url = `${this.apiUrl}Checkout/vnpay/callback`;
+  processPaymentCallback(paymentMethod: string, checkoutData: CheckoutModel): Observable<any> {
+    const url = `${this.apiUrl}Checkout/${paymentMethod}/callback`;
     return this.http
       .get(url, { 
         headers: this.getAuthHeaders(),
@@ -47,14 +47,11 @@ export class CheckoutService {
   }
 
   private getQueryParams(): { [key: string]: string } {
-    // Get all URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const params: { [key: string]: string } = {};
-    
     urlParams.forEach((value, key) => {
       params[key] = value;
     });
-    
     return params;
   }
 

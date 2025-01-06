@@ -205,26 +205,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     try {
       const checkoutData = this.prepareCheckoutData();
-
-      switch (checkoutData.payMethod) {
-        case 'vnpay':
-          await this.handleVnPayPayment(checkoutData);
-          break;
-
-        case 'momo':
-          await this.handleMomoPayment(checkoutData);
-          break;
-
-        default:
-          await this.handleDirectPayment(checkoutData);
-      }
+      await this.handlePayment(checkoutData);
     } catch (error: any) {
-      console.error('Detailed checkout error:', error);
+      console.error('Checkout error:', error);
       this.error = this.getErrorMessage(error);
     } finally {
       this.loading = false;
     }
   }
+
 
   private getErrorMessage(error: any): string {
     if (error.error?.message) {
@@ -239,28 +228,46 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     return 'An error occurred during checkout. Please try again.';
   }
 
-  private async handleVnPayPayment(checkoutData: CheckoutModel): Promise<void> {
-    // Step 1: Process initial checkout
-    const response = await this.checkOutService
-      .processCheckout(checkoutData)
-      .toPromise();
+  private async handlePayment(checkoutData: CheckoutModel): Promise<void> {
+    const response = await this.checkOutService.processCheckout(checkoutData).toPromise();
 
-    if (response?.payUrl) {
-      // Store checkout data in sessionStorage for callback handling
-      sessionStorage.setItem('pendingCheckout', JSON.stringify(checkoutData));
-      
-      // Redirect to VNPay
-      window.location.href = response.payUrl;
-    } else {
-      throw new Error('Failed to generate VNPay payment URL');
+    switch (checkoutData.payMethod) {
+      case 'vnpay':
+        await this.handlePaymentRedirect(response?.payUrl, checkoutData);
+        break;
+
+      case 'momo':
+        await this.handlePaymentRedirect(response?.payUrl, checkoutData);
+        break;
+
+      case 'directCheck':
+        await this.handleDirectPayment(response);
+        break;
+
+      default:
+        throw new Error(`Unsupported payment method: ${checkoutData.payMethod}`);
     }
   }
+  private async handlePaymentRedirect(payUrl: string | undefined, checkoutData: CheckoutModel): Promise<void> {
+    if (!payUrl) {
+      throw new Error(`Failed to generate payment URL for ${checkoutData.payMethod}`);
+    }
+    sessionStorage.setItem('pendingCheckout', JSON.stringify(checkoutData));
+    window.location.href = payUrl;
+  }
 
+  private async handleDirectPayment(response: any): Promise<void> {
+    if (!response?.id) {
+      throw new Error('Invalid direct payment response');
+    }
+    this.router.navigate(['/checkout/success'], {
+      queryParams: { orderId: response.id }
+    });
+  }
   private async handleMomoPayment(checkoutData: CheckoutModel): Promise<void> {
     throw new Error('Momo payment not implemented yet');
   }
-  async handleVnPayCallback(): Promise<void> {
-    // Get stored checkout data
+  async handlePaymentCallback(paymentMethod: string): Promise<void> {
     const storedCheckout = sessionStorage.getItem('pendingCheckout');
     if (!storedCheckout) {
       this.error = 'No pending checkout found';
@@ -270,36 +277,22 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const checkoutData: CheckoutModel = JSON.parse(storedCheckout);
 
     try {
-      // Process VNPay callback
       const response = await this.checkOutService
-        .processVnPayCallback(checkoutData)
+        .processPaymentCallback(paymentMethod, checkoutData)
         .toPromise();
 
       if (response === 'ok') {
-        // Clear stored checkout data
         sessionStorage.removeItem('pendingCheckout');
-        
-        // Navigate to success page
         this.router.navigate(['/checkout/success']);
       } else {
         this.error = 'Payment verification failed';
         this.router.navigate(['/checkout/failure']);
       }
     } catch (error: any) {
-      console.error('VNPay callback error:', error);
+      console.error(`${paymentMethod} callback error:`, error);
       this.error = this.getErrorMessage(error);
       this.router.navigate(['/checkout/failure']);
     }
-  }
-  private async handleDirectPayment(
-    checkoutData: CheckoutModel
-  ): Promise<void> {
-    const response = await this.checkOutService
-      .processCheckout(checkoutData)
-      .toPromise();
-    this.router.navigate(['/checkout/success'], {
-      queryParams: { orderId: response.id },
-    });
   }
 
   ngOnDestroy(): void {
