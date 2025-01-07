@@ -268,32 +268,42 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     throw new Error('Momo payment not implemented yet');
   }
   async handlePaymentCallback(paymentMethod: string): Promise<void> {
-    const storedCheckout = sessionStorage.getItem('pendingCheckout');
-    if (!storedCheckout) {
-      this.error = 'No pending checkout found';
-      return;
-    }
-
-    const checkoutData: CheckoutModel = JSON.parse(storedCheckout);
-
     try {
-      const response = await this.checkOutService
-        .processPaymentCallback(paymentMethod, checkoutData)
-        .toPromise();
+        const storedCheckout = sessionStorage.getItem('pendingCheckout');
+        if (!storedCheckout) {
+            this.error = 'No pending checkout found';
+            return;
+        }
 
-      if (response === 'ok') {
-        sessionStorage.removeItem('pendingCheckout');
-        this.router.navigate(['/checkout/success']);
-      } else {
-        this.error = 'Payment verification failed';
-        this.router.navigate(['/checkout/failure']);
-      }
+        const checkoutData: CheckoutModel = JSON.parse(storedCheckout);
+        const response = await this.checkOutService
+            .processPaymentCallback(paymentMethod, checkoutData)
+            .toPromise();
+
+        if (response?.success) {
+            sessionStorage.removeItem('pendingCheckout');
+            this.router.navigate(['/checkout/success']);
+        } else {
+            this.error = response?.message || 'Payment verification failed';
+            this.router.navigate(['/checkout/failure']);
+        }
     } catch (error: any) {
-      console.error(`${paymentMethod} callback error:`, error);
-      this.error = this.getErrorMessage(error);
-      this.router.navigate(['/checkout/failure']);
+        console.error(`${paymentMethod} callback error:`, error);
+        this.error = this.getErrorMessage(error);
+        this.router.navigate(['/checkout/failure']);
     }
-  }
+}
+
+// Adjust CheckoutService to handle the updated callback
+// processPaymentCallback(paymentMethod: string): Observable<any> {
+//     const url = `${this.apiUrl}Checkout/${paymentMethod}/callback`;
+//     return this.http
+//         .get(url, { headers: this.getAuthHeaders() })
+//         .pipe(
+//             catchError(this.handleError),
+//             timeout(30000)
+//         );
+// }
 
   ngOnDestroy(): void {
     this.destroy$.next();

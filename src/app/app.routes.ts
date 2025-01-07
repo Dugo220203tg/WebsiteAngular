@@ -16,6 +16,7 @@ import { CartComponent } from './pages/cart/cart.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { WishListComponent } from './pages/wish-list/wish-list.component';
 import { SuccessComponent } from './pages/check-out/success/success.component';
+import { FalseComponent } from './pages/check-out/false/false.component';
 export const routes: Routes = [
   {
     path: '',
@@ -79,6 +80,10 @@ export const routes: Routes = [
   {
     path: 'checkout/success',
     component:SuccessComponent,
+  },
+  {
+    path: 'checkout/false',
+    component:FalseComponent,
   },
   {
     path: 'cart',

@@ -22,14 +22,14 @@ export class ProductDetailComponent implements OnInit {
   loading: boolean = false;
   quantity: number = 1; // Default quantity
 
-  switchTab(tabId: string, event: Event) {
-    event.preventDefault();
-    this.activeTab = tabId;
-  }
+  // switchTab(tabId: string, event: Event) {
+  //   event.preventDefault();
+  //   this.activeTab = tabId;
+  // }
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute,
-    private cartService: CartService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
